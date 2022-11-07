@@ -2,8 +2,8 @@
 #include <tchar.h>
 #include "resource.h"
 #include<cmath>
-const INT ButtonNumber = 9;
-INT AnableFieldsNumber = ButtonNumber;
+const INT ButtonNumber = 9;//число всех полей
+INT EnableFieldsNumber = ButtonNumber;//число пустых полей
 HWND hButtonArr[ButtonNumber], hNewGameButton;
 BOOL Result = 0;
 
@@ -33,24 +33,24 @@ BOOL CALLBACK DlgProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam) {
 		}
 		case WM_COMMAND:
 		{
-			if (AnableFieldsNumber % 2 == 0) {
+			if (EnableFieldsNumber % 2 == 0) {
 				SetWindowText(hWnd, TEXT("Noughts and crosses  X turn"));
 			}
 			else {
 				SetWindowText(hWnd, TEXT("Noughts and crosses  O turn"));
 			}
-			if (LOWORD(wParam) >= IDC_BUTTON1 && LOWORD(wParam) <= IDC_BUTTON9 && AnableFieldsNumber>0) {
+			if (LOWORD(wParam) >= IDC_BUTTON1 && LOWORD(wParam) <= IDC_BUTTON9 && EnableFieldsNumber >0) {
 				INT Position = 0;
 				for (; LOWORD(wParam)!=IDC_BUTTON1 + Position; Position++) {}//определение индекса нажатой кнопки
 
 
-				if(AnableFieldsNumber%2 == 0) SendMessage(hButtonArr[Position], WM_SETTEXT, 0, LPARAM(TEXT("O")));
+				if(EnableFieldsNumber %2 == 0) SendMessage(hButtonArr[Position], WM_SETTEXT, 0, LPARAM(TEXT("O")));
 				else SendMessage(hButtonArr[Position], WM_SETTEXT, 0, LPARAM(TEXT("X")));
-				AnableFieldsNumber--;
+				EnableFieldsNumber--;
 				EnableWindow(hButtonArr[Position], FALSE);
 				Result = bWhoWon(hButtonArr, hWnd);
 				if (Result == 1) EnableWindow(hNewGameButton, TRUE);//если кто-то победил
-				else if (AnableFieldsNumber == 0) {
+				else if (EnableFieldsNumber == 0) {//если ничья
 					EnableWindow(hNewGameButton, TRUE);
 					MessageBox(hWnd, TEXT("Draw"), TEXT("The end"), MB_OK);
 				}
@@ -61,7 +61,7 @@ BOOL CALLBACK DlgProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam) {
 					EnableWindow(hButtonArr[i], TRUE);
 				}
 				EnableWindow(hNewGameButton, FALSE);
-				AnableFieldsNumber = 9;
+				EnableFieldsNumber = 9;
 			}
 			break;
 		}
@@ -72,7 +72,7 @@ BOOL CALLBACK DlgProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam) {
 
 BOOL bWhoWon(HWND* hButton, HWND hWnd) {//использовать после каждого нажатия кнопки
 	BOOL Result = FALSE;
-	TCHAR FieldsVal[ButtonNumber] = {}, ch, adapt[2];
+	TCHAR FieldsVal[ButtonNumber] = {}, ch, adapt[2];//записать посимвольно без лишнего массива на 2 элемента не получается
 	INT RowSize = sqrt(ButtonNumber);
 	for (int i = 0; i < ButtonNumber; i++) {//чтение текста кнопок в массив
 		SendMessage(hButton[i], WM_GETTEXT, 2, LPARAM(adapt));
@@ -114,7 +114,7 @@ BOOL bWhoWon(HWND* hButton, HWND hWnd) {//использовать после каждого нажатия кно
 	}
 	if (Result == TRUE) {
 		for (int i = 0; i < RowSize * RowSize; i++) {
-			EnableWindow(hButton[i], FALSE);
+			EnableWindow(hButton[i], FALSE);//есть вероятность, что если не заблокировать все кнопки, то при следующем ходе может изменится победитель
 		}
 		TCHAR buff[50];
 		_stprintf_s(buff, TEXT("%c -palyer won! Congratulations :D"), ch);
