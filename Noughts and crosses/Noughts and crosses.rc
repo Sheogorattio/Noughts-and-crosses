@@ -25,8 +25,10 @@ LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 //
 
 IDD_DIALOG1 DIALOGEX 0, 0, 155, 160
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
 CAPTION "Noughts and crosses"
+MENU IDR_MENU1
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "Button4",IDC_BUTTON4,3,48,50,42
@@ -67,6 +69,20 @@ END
 IDD_DIALOG1 AFX_DIALOG_LAYOUT
 BEGIN
     0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "Exit",                        ID_MENU_EXIT
+    END
 END
 
 #endif    // Russian (Russia) resources

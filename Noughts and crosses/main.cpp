@@ -4,21 +4,26 @@
 #include<cmath>
 const INT ButtonNumber = 9;//число всех полей
 INT EnableFieldsNumber = ButtonNumber;//число пустых полей
-HWND hButtonArr[ButtonNumber], hNewGameButton;
+HWND hButtonArr[ButtonNumber], hNewGameButton, hDialog;
 BOOL Result = 0;
+HMENU hMenu;
 
 BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
 
 BOOL bWhoWon(HWND* hButton, HWND hWnd/*, WPARAM wParam*/);
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPTSTR lpszCmdLine, int nCmdShow) {
-	return DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DLGPROC(DlgProc));
+	return DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), 0, DLGPROC(DlgProc));
 }
 
 BOOL CALLBACK DlgProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam) {
 	switch (uMessage) {
+		
 		case WM_INITDIALOG:
 		{
+			hDialog = hWnd;
+			hMenu = LoadMenu(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MENU1));
+			SetMenu(hDialog, hMenu);
 			hNewGameButton = GetDlgItem(hWnd, IDC_BUTTON10);
 			for (int i = 0; i < ButtonNumber; i++) {
 				hButtonArr[i] = GetDlgItem(hWnd, IDC_BUTTON1 +i);
@@ -33,6 +38,9 @@ BOOL CALLBACK DlgProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam) {
 		}
 		case WM_COMMAND:
 		{
+			if (LOWORD(wParam) == ID_MENU_EXIT) {
+				SendMessage(hWnd, WM_CLOSE, 0, 0);
+			}
 			if (EnableFieldsNumber % 2 == 0) {
 				SetWindowText(hWnd, TEXT("Noughts and crosses  X turn"));
 			}
@@ -114,7 +122,7 @@ BOOL bWhoWon(HWND* hButton, HWND hWnd) {//использовать после каждого нажатия кно
 	}
 	if (Result == TRUE) {
 		for (int i = 0; i < RowSize * RowSize; i++) {
-			EnableWindow(hButton[i], FALSE);//есть вероятность, что если не заблокировать все кнопки, то при следующем ходе может изменится победитель
+			EnableWindow(hButton[i], FALSE);//есть вероятность, что если не заблокировать все кнопки, то при следующем ходе может измениться победитель
 		}
 		TCHAR buff[50];
 		_stprintf_s(buff, TEXT("%c -palyer won! Congratulations :D"), ch);
